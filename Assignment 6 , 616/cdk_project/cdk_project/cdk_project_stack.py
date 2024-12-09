@@ -1,9 +1,11 @@
+#I had a hard time figuring this one out, and I could not get it to run the way I wanted it to.
+
+
 from aws_cdk import (
     App,
     Stack,
     aws_ec2 as ec2,
     aws_elasticloadbalancingv2 as elbv2,
-    aws_iam as iam,
     Duration,
 )
 from constructs import Construct
@@ -31,8 +33,8 @@ class CdkProjectStack(Stack):
             ]
         )
 
-        # Key Pair
-        key_name = "assignment6"  # Key pair created on AWS
+        # Key Pair 
+        key_name = "assignment6" # I made this keypair in my AWS account
 
         # Security Group
         sg = ec2.SecurityGroup(
@@ -44,22 +46,15 @@ class CdkProjectStack(Stack):
         sg.add_ingress_rule(ec2.Peer.ipv4(your_ip), ec2.Port.tcp(22), "Allow SSH")
         sg.add_ingress_rule(ec2.Peer.any_ipv4(), ec2.Port.tcp(80), "Allow HTTP")
 
-        # IAM Role for EC2 instances to access S3
-        role = iam.Role(
-            self, "EC2Role",
-            assumed_by=iam.ServicePrincipal("ec2.amazonaws.com"),
-            managed_policies=[iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3ReadOnlyAccess")]
-        )
-
         # Instances (Webserver1 and Webserver2)
-        ami_id = "ami-01cc34ab2709337aa"  # Ensure this AMI is valid for your region
+        ami_id = "ami-01cc34ab2709337aa"
 
         webserver1 = ec2.Instance(
             self, "Webserver1",
             instance_type=ec2.InstanceType(instance_type),
             machine_image=ec2.MachineImage.generic_linux({self.region: ami_id}),
             vpc=vpc,
-            key_name=key_name,  # Use the existing key pair name here
+            key_name="assignment6",  
             security_group=sg,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
             user_data=ec2.UserData.custom(
@@ -70,8 +65,7 @@ class CdkProjectStack(Stack):
                 chkconfig httpd on
                 aws s3 cp s3://seis665-public/index.php /var/www/html/
                 """
-            ),
-            role=role  # Attach the IAM role to the instance
+            )
         )
 
         webserver2 = ec2.Instance(
@@ -79,7 +73,7 @@ class CdkProjectStack(Stack):
             instance_type=ec2.InstanceType(instance_type),
             machine_image=ec2.MachineImage.generic_linux({self.region: ami_id}),
             vpc=vpc,
-            key_name=key_name,  # Use the existing key pair name here
+            key_name="assignment6",  
             security_group=sg,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
             user_data=ec2.UserData.custom(
@@ -90,8 +84,7 @@ class CdkProjectStack(Stack):
                 chkconfig httpd on
                 aws s3 cp s3://seis665-public/index.php /var/www/html/
                 """
-            ),
-            role=role  # Attach the IAM role to the instance
+            )
         )
 
         # Application Load Balancer
