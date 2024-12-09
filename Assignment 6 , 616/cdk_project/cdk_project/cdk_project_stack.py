@@ -54,7 +54,7 @@ class CdkProjectStack(Stack):
             instance_type=ec2.InstanceType(instance_type),
             machine_image=ec2.MachineImage.generic_linux({self.region: ami_id}),
             vpc=vpc,
-            key_name="assignment6",  
+            key_name=key_name,  
             security_group=sg,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
             user_data=ec2.UserData.custom(
@@ -73,7 +73,7 @@ class CdkProjectStack(Stack):
             instance_type=ec2.InstanceType(instance_type),
             machine_image=ec2.MachineImage.generic_linux({self.region: ami_id}),
             vpc=vpc,
-            key_name="assignment6",  
+            key_name=key_name,  
             security_group=sg,
             vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
             user_data=ec2.UserData.custom(
